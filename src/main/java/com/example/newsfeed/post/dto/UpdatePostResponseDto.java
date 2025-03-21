@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class UpdatePostResponseDto {
     private final String title;
     private final String content;
+    private final Long likeCount;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 }

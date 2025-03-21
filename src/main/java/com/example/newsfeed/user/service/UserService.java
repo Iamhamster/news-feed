@@ -1,5 +1,6 @@
 package com.example.newsfeed.user.service;
 
+import com.example.newsfeed.base.config.PasswordEncoder;
 import com.example.newsfeed.user.dto.*;
 import com.example.newsfeed.user.entity.UserEntity;
 import com.example.newsfeed.user.repository.UserRepository;
@@ -11,13 +12,31 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+//    private final PasswordEncoder passwordEncoder;
+
+    @Transactional(readOnly = true)
+    public UserEntity getUserEntity(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new IllegalStateException("비밀번호를 변경할 유저가 아닙니다.")
+        );
+    }
 
     //비밀번호 수정
     @Transactional
     public UpdatePasswordResponseDto updatePasswordUser(Long userId, UpdatePasswordUserRequestDto dto) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException("비밀번호를 변경할 유저가 아닙니다."));
-        user.updatePassword(dto.getNewPassword());
+        if(!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())){
+            throw new IllegalStateException("현재 비밀번호가 일치하지 않습니다.");
+        }
+        if(dto.getOldPassword().equals(dto.getNewPassword())){
+            throw new IllegalStateException("현재 비밀번호와 동일한 비밀번호로는 변경할 수 없습니다.");
+        }
+        String encode = passwordEncoder.encode(dto.getNewPassword());
+
+        user.updatePassword(encode);
         return new UpdatePasswordResponseDto(user.getPassword());
     }
 

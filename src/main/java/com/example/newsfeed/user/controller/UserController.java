@@ -12,14 +12,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    //인증인가
-    @PutMapping("")
-    public void update(@RequestBody UserRequestDto dto){
-        userService.update(dto);
-    }
-
     //비밀번호 수정
-    @PatchMapping("/v1/auths/password")
+    @PatchMapping("/v1/auths/password/{userId}")
     public ResponseEntity<UpdatePasswordResponseDto> updatePasswordUser(@PathVariable Long userId, @RequestBody UpdatePasswordUserRequestDto dto){
         return ResponseEntity.ok(userService.updatePasswordUser(userId, dto));
     }

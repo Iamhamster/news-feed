@@ -8,4 +8,12 @@ import java.time.LocalDateTime;
 public class UpdatePostRequestDto {
     private String title;
     private String content;
+    private Long likeCount;
+
+    //테스트용
+    public UpdatePostRequestDto(String title, String content, Long likeCount) {
+        this.title = title;
+        this.content = content;
+        this.likeCount = likeCount;
+    }
 }

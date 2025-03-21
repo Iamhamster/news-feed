@@ -1,4 +1,4 @@
-package com.example.newsfeed.base.config;
+package com.example.newsfeed.base.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -26,12 +26,14 @@ public class JwtUtil {
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
+    //토큰 디코드
     @PostConstruct
     public void init() {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         key = Keys.hmacShaKeyFor(bytes);
     }
 
+    //유저 정보로 토큰 생성
     public String createToken(Long userId, String email) {
         Date date = new Date();
 
@@ -45,6 +47,7 @@ public class JwtUtil {
                         .compact();
     }
 
+    //앞 7글자 빼고 토큰값 가져옮
     public String substringToken(String tokenValue) {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
@@ -52,6 +55,7 @@ public class JwtUtil {
         throw new IllegalStateException("Not Found Token");
     }
 
+    //토큰에서 사용자 정보 부분 가져옮
     public Claims extractClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)

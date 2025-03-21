@@ -2,10 +2,11 @@ package com.example.newsfeed.auth.service;
 
 import com.example.newsfeed.auth.dto.AuthRequestDto;
 import com.example.newsfeed.auth.dto.AuthResponseDto;
-import com.example.newsfeed.base.config.JwtUtil;
+import com.example.newsfeed.auth.dto.LoginAuthRequestDto;
+import com.example.newsfeed.base.config.PasswordEncoder;
+import com.example.newsfeed.base.filter.JwtUtil;
 import com.example.newsfeed.user.entity.UserEntity;
 import com.example.newsfeed.user.repository.UserRepository;
-import com.example.newsfeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,24 +16,28 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
+    //회원가입
     @Transactional
     public void signup(AuthRequestDto dto){
-        if(userRepository.existByEmail(dto.getEmail())){
+        if(userRepository.existsByEmail(dto.getEmail())){
             throw new IllegalStateException("이미 가입된 이메일임");
         }
 
-        UserEntity user = new UserEntity(dto.getEmail(), dto.getPassword(), dto.getNickName(), dto.getName());
-        UserEntity savedUser = userRepository.save(user);
+        String encode = passwordEncoder.encode(dto.getPassword());//인코드
+
+        UserEntity user = new UserEntity(dto.getEmail(), encode, dto.getNickName(), dto.getName());
+        userRepository.save(user);
     }
 
+    //로그인
     @Transactional(readOnly = true)
-    public AuthResponseDto login(AuthRequestDto dto){
+    public AuthResponseDto login(LoginAuthRequestDto dto){
         UserEntity user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new IllegalStateException("없는 회원임"));
-        String password = dto.getPassword();
-        if(password.equals(user.getPassword())){
+
+        if(passwordEncoder.matches(user.getPassword(), dto.getPassword())){
             throw new IllegalStateException("비밀번호 잘못됨");
         }
 

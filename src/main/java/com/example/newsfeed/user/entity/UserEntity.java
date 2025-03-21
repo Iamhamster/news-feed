@@ -14,7 +14,7 @@ public class UserEntity extends BaseEntity {
     @Column(nullable = false)
     private Long userId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
@@ -23,11 +23,17 @@ public class UserEntity extends BaseEntity {
     @Column(nullable = false)
     private String nickName;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
-    private String profile;
+    private String profile = "비어있는 profile 입니다.";
+
+    @Column(nullable = false)
+    private int followerUsers = 0;
+
+    @Column(nullable = false)
+    private int followingUsers = 0;
 
     public UserEntity(String email, String password, String nickName, String name) {
         this.email = email;
@@ -46,5 +52,13 @@ public class UserEntity extends BaseEntity {
 
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    //팔로잉 & 팔로워
+    public void setFollowerUsers(){
+        followerUsers++;
+    }
+    public void setFollowingUsers(){
+        followingUsers++;
     }
 }

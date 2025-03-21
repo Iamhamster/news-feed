@@ -2,6 +2,7 @@ package com.example.newsfeed.auth.controller;
 
 import com.example.newsfeed.auth.dto.AuthRequestDto;
 import com.example.newsfeed.auth.dto.AuthResponseDto;
+import com.example.newsfeed.auth.dto.LoginAuthRequestDto;
 import com.example.newsfeed.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,13 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
 
+    //회원가입
     @PostMapping("/v1/auth/signup")
     public void signup(@RequestBody AuthRequestDto dto){
         authService.signup(dto);
     }
 
-    @PostMapping("/v1/auths/login")
-    public AuthResponseDto login(@RequestBody AuthRequestDto dto){
+    //로그인
+    @PostMapping("/v1/auth/login")
+    public AuthResponseDto login(@RequestBody LoginAuthRequestDto dto){
         return authService.login(dto);
     }
 }
