@@ -19,8 +19,8 @@ public class CommentController {
 
     //댓글 생성
     @PostMapping("/v1/posts/{postId}/comments")
-    public ResponseEntity<SaveCommentResponseDto> saveComment(PostEntity post, @RequestBody SaveCommentRequestDto dto){
-        return ResponseEntity.ok(commentService.saveComment(post.getId(), dto));
+    public ResponseEntity<SaveCommentResponseDto> saveComment(@PathVariable Long postId, @RequestBody SaveCommentRequestDto dto){
+        return ResponseEntity.ok(commentService.saveComment(postId, dto));
     }
 
     //댓글 다건 조회

@@ -21,31 +21,31 @@ public class LikeService {
     private int sw=0;
 
     @Transactional
-        public SaveLikeResponseDto saveLike(AuthUser user, Long postId) {
-            UserEntity users = userRepository.findById(user.getId()).orElseThrow(
-                    () -> new IllegalStateException("사용자가 없음")
-            );
-            PostEntity post = postRepository.findById(postId).orElseThrow(
-                    () -> new IllegalStateException("게시글이 없음")
-            );
-            LikeEntity like = new LikeEntity(users, post);
-            likeRepository.save(like);
+    public SaveLikeResponseDto saveLike(AuthUser user, Long postId) {
+        UserEntity users = userRepository.findById(user.getId()).orElseThrow(
+                () -> new IllegalStateException("사용자가 없음")
+        );
+        PostEntity post = postRepository.findById(postId).orElseThrow(
+                () -> new IllegalStateException("게시글이 없음")
+        );
+        LikeEntity like = new LikeEntity(users, post);
+        likeRepository.save(like);
 
-            if(sw==0){
-                post.updateLikePost(post.getLikeCount()+1);
-            }
-            else{
-                post.updateLikePost(post.getLikeCount());
-            }
-            sw++;
+        if(sw==0){
+            post.updateLikePost(post.getLikeCount()+1);
+        }
+        else{
+            post.updateLikePost(post.getLikeCount());
+        }
+        sw++;
 
-            return new SaveLikeResponseDto(post.getLikeCount());
+        return new SaveLikeResponseDto(post.getLikeCount());
     }
 
     @Transactional
     public void deleteLike(AuthUser user) {
         sw=0;
-        LikeEntity like = likeRepository.findById(user.getId())//?
+        LikeEntity like = likeRepository.findById(user.getId())
                 .orElseThrow(() -> new IllegalStateException(""));
         if(like.getPost().getUser().getUserId().equals(user.getId())){
             throw new IllegalStateException("본인이 작성한 게시물에는 좋아요를 할 수 없습니다.");
